@@ -1,6 +1,5 @@
 package in.billmitra.entities;
 
-import in.billmitra.utils.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,17 +19,8 @@ public class StoreEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

@@ -37,7 +37,8 @@ An `ITEM` is an object which is billed for the customer. It contains price and i
 ## Flow of Application
 
 - A store `/register` onto the application with email and password.
-- Then store can `/create` its managers and employees.
+- User with ROLE **OWNER** will be created under store (First User).
+- Then owner can `/create` its managers and employees.
 - Managers or Employees can `/login` to the application for that store.
 - Managers can `/create` more Employees.
 - Managers can also CRUD on `/categories`, `/items`.
@@ -63,7 +64,17 @@ Now let's get started.
 
 #### Configure Application
 
-- Configure DB and related properties
+- Configure DB and related properties.
 - Also, set Context Path for the APIs.
 - Environment variables using `.env` file (for future references) but use it to configure run/debug configurations.
+
+#### Create Entity Classes
 - Created Entity Classes as per the Database Overview.
+- Create Relationship (PK - FK) between different tables.
+
+#### Authentication
+- Used Jason-web-token to authenticate using cookies
+- Authentication creates cookies that are passed to the frontend.
+- Configure SecurityConfig with `@EnableWebSecurity`.
+- Custom CORS Policy, FilterChain, etc.
+- 

@@ -1,6 +1,5 @@
 package in.billmitra.entities;
 
-import in.billmitra.utils.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
