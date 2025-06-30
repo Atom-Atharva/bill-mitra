@@ -77,4 +77,4 @@ Now let's get started.
 - Authentication creates cookies that are passed to the frontend.
 - Configure SecurityConfig with `@EnableWebSecurity`.
 - Custom CORS Policy, FilterChain, etc.
-- 
+- `CustomUserDetails` Class to fetch Custom User for `SecurityContextHolder`.

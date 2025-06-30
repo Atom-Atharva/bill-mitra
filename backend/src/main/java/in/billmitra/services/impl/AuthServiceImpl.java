@@ -8,6 +8,7 @@ import in.billmitra.entities.StoreEntity;
 import in.billmitra.entities.UserEntity;
 import in.billmitra.repositories.StoreRepository;
 import in.billmitra.repositories.UserRepository;
+import in.billmitra.security.CustomUserDetails;
 import in.billmitra.services.AuthService;
 import in.billmitra.utils.JwtUtil;
 import jakarta.servlet.http.Cookie;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,11 +59,10 @@ public class AuthServiceImpl implements AuthService {
                 .name(request.getUserName())
                 .password(request.getUserPassword())
                 .role(Role.OWNER)
-                .storeId(store.getId())
                 .build();
 
         try {
-            registerUser(registerUserRequest, response);
+            registerUserAndLogin(registerUserRequest, store.getId(), response);
         } catch (ResponseStatusException e) {
             // Delete Store
             storeRepository.delete(store);
@@ -78,43 +79,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void registerUser(RegisterUserRequest request, HttpServletResponse response) {
+    public void registerUser(RegisterUserRequest request) {
         Optional<UserEntity> existingUser = userRepository.findByEmail(request.getEmail());
         if (existingUser.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
         }
 
-        StoreEntity store = storeRepository.findById(request.getStoreId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Store not found"));
-
-        Role role = (request.getRole() != null) ? request.getRole() : Role.EMPLOYEE;
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
-
-        UserEntity user = UserEntity.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(hashedPassword)
-                .role(role)
-                .store(store)
-                .build();
+        // Get Store from SecurityContextHolder
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long storeId = customUserDetails.getStoreId();
 
         try {
-            userRepository.save(user);
-        } catch (Exception e) {
+            saveUserInStore(request, storeId);
+        } catch (ResponseStatusException e) {
             e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to register user");
-        }
-
-        // Login User and Send Back Cookie
-        AuthRequest authRequest = AuthRequest.builder()
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .build();
-
-        try {
-            loginUser(authRequest, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to login user");
+            throw e;
         }
     }
 
@@ -147,5 +126,49 @@ public class AuthServiceImpl implements AuthService {
         cookie.setMaxAge(0); // Instant deletion
 
         response.addCookie(cookie);
+    }
+
+    private void registerUserAndLogin(RegisterUserRequest request, Long storeId, HttpServletResponse response) {
+        try {
+            saveUserInStore(request, storeId);
+        } catch (ResponseStatusException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        // Login User and Send Back Cookie
+        AuthRequest authRequest = AuthRequest.builder()
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .build();
+
+        try {
+            loginUser(authRequest, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to login user");
+        }
+    }
+
+    private void saveUserInStore(RegisterUserRequest request, Long storeId) {
+        StoreEntity store = storeRepository.findById(storeId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Store not found"));
+
+        Role role = (request.getRole() != null) ? request.getRole() : Role.EMPLOYEE;
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+
+        UserEntity user = UserEntity.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(hashedPassword)
+                .role(role)
+                .store(store)
+                .build();
+
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to register user");
+        }
     }
 }

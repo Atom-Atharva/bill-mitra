@@ -13,5 +13,4 @@ public class RegisterUserRequest {
     private String email;
     private String password;
     private Role role;
-    private Long storeId;
 }

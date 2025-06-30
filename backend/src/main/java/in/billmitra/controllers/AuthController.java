@@ -37,9 +37,9 @@ public class AuthController {
     }
 
     @PostMapping("/register/user")
-    public ResponseEntity<MessageResponse> registerUser(@RequestBody RegisterUserRequest request, HttpServletResponse response) {
+    public ResponseEntity<MessageResponse> registerUser(@RequestBody RegisterUserRequest request) {
         try {
-            authService.registerUser(request, response);
+            authService.registerUser(request);
         } catch (ResponseStatusException e) {
             e.printStackTrace();
             return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getMessage()));

@@ -10,7 +10,7 @@ public interface AuthService {
 
     void loginUser(AuthRequest request, HttpServletResponse response);
 
-    void registerUser(RegisterUserRequest request, HttpServletResponse response);
+    void registerUser(RegisterUserRequest request);
 
     void logoutUser(HttpServletResponse response);
 }

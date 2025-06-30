@@ -2,6 +2,7 @@ package in.billmitra.services.impl;
 
 import in.billmitra.entities.UserEntity;
 import in.billmitra.repositories.UserRepository;
+import in.billmitra.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,12 +23,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with Email: " + email));
 
         // Tell Spring what this user's credentials and roles are
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                // Add "ROLE_" prefix here to comply with Spring Security
-                // "OWNER" → "ROLE_OWNER"
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
+        return new CustomUserDetails(user);
     }
 }
