@@ -69,12 +69,32 @@ Now let's get started.
 - Environment variables using `.env` file (for future references) but use it to configure run/debug configurations.
 
 #### Create Entity Classes
+
 - Created Entity Classes as per the Database Overview.
 - Create Relationship (PK - FK) between different tables.
 
 #### Authentication
+
 - Used Jason-web-token to authenticate using cookies
 - Authentication creates cookies that are passed to the frontend.
 - Configure SecurityConfig with `@EnableWebSecurity`.
 - Custom CORS Policy, FilterChain, etc.
 - `CustomUserDetails` Class to fetch Custom User for `SecurityContextHolder`.
+
+#### Managing Categories
+
+- Controller for handling category APIs.
+- For `ADDING CATEGORY` file and JSON as string is passed in request which can be parsed into CategoryRequest.
+- `S3 BUCKET` is used to store files and access the imgUrl.
+
+#### Configuration of S3 Bucket
+
+- Refer `AWSConfig, FileUploadService and FileUploadServiceImpl` classes.
+
+```.env
+# AWS Properties
+aws.access.key=${AWS_ACCESS_KEY}
+aws.secret.key=${AWS_SECRET_KEY}
+aws.region=${AWS_REGION}
+aws.bucket.name=${AWS_BUCKET_NAME}
+```
