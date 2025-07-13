@@ -11,7 +11,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "ref_item")
+@Table(
+        name = "ref_item",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name","category_id"})
+)
 @Data
 @Builder
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class ItemEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     private String description;
@@ -31,6 +34,9 @@ public class ItemEntity {
 
     @Column(name = "img_url")
     private String imgUrl;
+
+    @Column(name = "bg_color")
+    private String bgColor = "#808080";
 
     @ManyToOne
     @JoinColumn(name = "category_id")

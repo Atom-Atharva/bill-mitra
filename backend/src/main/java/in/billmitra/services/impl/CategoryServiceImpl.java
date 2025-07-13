@@ -31,17 +31,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse addCategory(CategoryRequest request, MultipartFile file) {
+        // Get Store
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long storeId = customUserDetails.getStoreId();
+
         // Find Existing Category
-        Optional<CategoryEntity> existingCategory = categoryRepository.findByName(request.getName());
+        Optional<CategoryEntity> existingCategory = categoryRepository.findByStore_idAndName(storeId, request.getName());
 
         // If found --> Throw ERR
         if (existingCategory.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
         }
-
-        // Get Store
-        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long storeId = customUserDetails.getStoreId();
 
         StoreEntity store = storeRepository.findById(storeId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Store not found"));
 

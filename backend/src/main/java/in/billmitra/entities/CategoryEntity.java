@@ -12,7 +12,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Table(name = "ref_category")
+@Table(
+        name = "ref_category",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "store_id"})
+)
 @Data
 @Builder
 @AllArgsConstructor
@@ -22,7 +25,7 @@ public class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     private String description;

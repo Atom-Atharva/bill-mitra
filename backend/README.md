@@ -86,6 +86,21 @@ Now let's get started.
 - Controller for handling category APIs.
 - For `ADDING CATEGORY` file and JSON as string is passed in request which can be parsed into CategoryRequest.
 - `S3 BUCKET` is used to store files and access the imgUrl.
+- Updated: CategoryEntity for making category unique within the store, not the whole DB.
+
+Using
+```java
+@Table(
+        name = "ref_category",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "store_id"})
+)
+```
+
+and
+
+```java
+Optional<CategoryEntity> findByStore_idAndName(Long storeId, String name);
+```
 
 #### Configuration of S3 Bucket
 
@@ -97,4 +112,26 @@ aws.access.key=${AWS_ACCESS_KEY}
 aws.secret.key=${AWS_SECRET_KEY}
 aws.region=${AWS_REGION}
 aws.bucket.name=${AWS_BUCKET_NAME}
+```
+
+#### Managing Items
+
+- Controller for handling item APIs.
+- For `ADDING ITEMS` file and JSON as string is passed in request which can be parsed into ItemRequest.
+- `S3 BUCKET` is used to store files and access the imgUrl.
+- ItemEntity for making Item unique within the category, not the whole DB.
+
+Using 
+
+```java
+@Table(
+        name = "ref_item",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name","category_id"})
+)
+```
+
+and 
+
+```java
+Optional<ItemEntity> findByCategory_idAndName(Long categoryId, String name);
 ```

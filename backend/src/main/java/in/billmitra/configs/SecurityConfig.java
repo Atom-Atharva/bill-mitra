@@ -36,8 +36,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/auth/login", "/auth/register/store").permitAll()
-                        .requestMatchers("/auth/register/user", "/categories/admin/**").hasAnyRole("OWNER", "MANAGER")
-//                        .requestMatchers("/categories/**").hasAnyRole("EMPLOYEE","OWNER", "MANAGER")
+                        .requestMatchers(
+                                "/auth/register/user",
+                                "/categories/admin/**",
+                                "/items/admin/**"
+                        ).hasAnyRole("OWNER", "MANAGER")
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService) // Use this service to fetch users from DB when someone logs in or presents a JWT.
