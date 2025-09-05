@@ -1,7 +1,6 @@
 package in.billmitra.dto;
 
-import in.billmitra.entities.Role;
-import in.billmitra.entities.StoreEntity;
+import in.billmitra.entities.enums.Role;
 import lombok.*;
 
 @Data

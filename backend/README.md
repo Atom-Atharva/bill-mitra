@@ -54,11 +54,13 @@ Diagram is designed using [drawSQL](https://drawsql.app).
 
 ## Let's get Technical
 
-This application is made using `SPRINGBOOT` with integration of `SPRING SECURITY`, `AWS S3 BUCKET` and more. Database used in this application is `MYSQL` because of its free usability.
+This application is made using `SPRINGBOOT` with integration of `SPRING SECURITY`, `AWS S3 BUCKET` and more. Database
+used in this application is `MYSQL` because of its free usability.
 
 ### How did I make it?
 
-To my future version, here is the well-documented application which you have built earlier. Yes! You have built it from scratch and by yourself. I am proud of you! `O7 ATOM`
+To my future version, here is the well-documented application which you have built earlier. Yes! You have built it from
+scratch and by yourself. I am proud of you! `O7 ATOM`
 
 Now let's get started.
 
@@ -79,7 +81,7 @@ Now let's get started.
 - Authentication creates cookies that are passed to the frontend.
 - Configure SecurityConfig with `@EnableWebSecurity`.
 - Custom CORS Policy, FilterChain, etc.
-- `CustomUserDetails` Class to fetch Custom User for `SecurityContextHolder`.
+- `CustomUserDetails` Class to fetch Custom User for `SecurityContextHolder` - Created for fetching storeId.
 
 #### Managing Categories
 
@@ -89,6 +91,7 @@ Now let's get started.
 - Updated: CategoryEntity for making category unique within the store, not the whole DB.
 
 Using
+
 ```java
 @Table(
         name = "ref_category",
@@ -121,17 +124,29 @@ aws.bucket.name=${AWS_BUCKET_NAME}
 - `S3 BUCKET` is used to store files and access the imgUrl.
 - ItemEntity for making Item unique within the category, not the whole DB.
 
-Using 
+Using
 
 ```java
 @Table(
         name = "ref_item",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"name","category_id"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "category_id"})
 )
 ```
 
-and 
+and
 
 ```java
 Optional<ItemEntity> findByCategory_idAndName(Long categoryId, String name);
 ```
+
+#### Let's place an Order
+
+- Controller for handling Order request
+- Flow for placing the order:
+  - Frontend places an order
+  - Order is stored with the 'PENDING' state inside the order table.
+  - If the payment mode is 'CASH' success it immediately.
+  - Else return and redirected to Payment Gateway with generated razorpay_order_id.
+  - After payment verify it and rewrite inside the Order Table for updating the status.
+  - With the order table also write the order items inside the order item list table.
+- Check `ref_order` and `ref_order_item` tables inside `OrderEntity` and `OrderItemEntity`.

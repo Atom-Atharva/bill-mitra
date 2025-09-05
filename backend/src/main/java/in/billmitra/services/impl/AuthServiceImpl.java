@@ -3,7 +3,7 @@ package in.billmitra.services.impl;
 import in.billmitra.dto.AuthRequest;
 import in.billmitra.dto.RegisterStoreRequest;
 import in.billmitra.dto.RegisterUserRequest;
-import in.billmitra.entities.Role;
+import in.billmitra.entities.enums.Role;
 import in.billmitra.entities.StoreEntity;
 import in.billmitra.entities.UserEntity;
 import in.billmitra.repositories.StoreRepository;

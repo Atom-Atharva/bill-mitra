@@ -1,39 +1,35 @@
 package in.billmitra.entities;
 
-import in.billmitra.entities.enums.Role;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "ref_user")
+@Table(name = "ref_order_item_mapping")
 @Data
 @Builder
-@AllArgsConstructor
 @RequiredArgsConstructor
-public class UserEntity {
+@AllArgsConstructor
+public class OrderItemMappingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
 
     @ManyToOne
-    @JoinColumn(name = "store_id")
-    private StoreEntity store;
+    @JoinColumn(name = "item_id")
+    private ItemEntity item;
+
+    private Integer quantity;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

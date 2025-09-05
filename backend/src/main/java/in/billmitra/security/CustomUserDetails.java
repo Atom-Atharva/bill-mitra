@@ -1,6 +1,6 @@
 package in.billmitra.security;
 
-import in.billmitra.entities.Role;
+import in.billmitra.entities.enums.Role;
 import in.billmitra.entities.UserEntity;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
