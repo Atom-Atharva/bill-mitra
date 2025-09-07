@@ -3,6 +3,7 @@ package in.billmitra.configs;
 import in.billmitra.filters.JwtAuthFilter;
 import in.billmitra.services.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,12 @@ import java.util.List;
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
+
+    @Value("${origin.dev}")
+    private String FRONTEND_ORIGIN_DEV;
+    @Value("${origin.prod}")
+    private String FRONTEND_ORIGIN_PROD;
+
 
     // Method Defines entire Security Config.
     @Bean
@@ -67,7 +74,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowedMethods(List.of("POST", "GET", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // FRONT-END ORIGIN
+        configuration.setAllowedOrigins(List.of(FRONTEND_ORIGIN_DEV,FRONTEND_ORIGIN_PROD)); // FRONT-END ORIGINS
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // APPLY TO ALL ROUTES

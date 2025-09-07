@@ -36,6 +36,7 @@ public class OrderEntity {
     private Double discount;
 
     // This is subTotal + taxFee - discount
+    @Column(nullable = false)
     private Double totalAmount;
 
     @Enumerated(EnumType.STRING)

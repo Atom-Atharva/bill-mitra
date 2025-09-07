@@ -38,7 +38,7 @@ An `ITEM` is an object which is billed for the customer. It contains price and i
 
 - A store `/register` onto the application with email and password.
 - User with ROLE **OWNER** will be created under store (First User).
-- Then owner can `/create` its managers and employees.
+- Then the owner can `/create` its managers and employees.
 - Managers or Employees can `/login` to the application for that store.
 - Managers can `/create` more Employees.
 - Managers can also CRUD on `/categories`, `/items`.
@@ -149,4 +149,18 @@ Optional<ItemEntity> findByCategory_idAndName(Long categoryId, String name);
   - Else return and redirected to Payment Gateway with generated razorpay_order_id.
   - After payment verify it and rewrite inside the Order Table for updating the status.
   - With the order table also write the order items inside the order item list table.
-- Check `ref_order` and `ref_order_item` tables inside `OrderEntity` and `OrderItemEntity`.
+- Check `ref_order` and `ref_order_item_mapping` tables inside `OrderEntity` and `OrderItemMappingEntity`.
+
+##### RAZORPAY PAYMENT GATEWAY
+
+We would use **razorPay** for our payment gateway, it is a free service and takes 2% + GST on every transaction, but in dev mode we will exploit it to learn new skill😛.
+
+We would follow the guidelines given inside the [razorPay docs](https://razorpay.com/docs/payments/server-integration/java/integration-steps/).
+
+- Create an Order in Server.
+- Add a checkout option on the frontend side.
+- Store fields in the Server (For Instant Feedback).
+- Verify Payment Signature.
+- Verify the Payment Status (Via WEB-HOOKS).
+
+**Note:** Web hooks are not allowed for localhost services, but I will still set it up just for production deployment in later stages of the application to improve UX (For this we need to update Security Config as well mostly CORS).
