@@ -35,4 +35,13 @@ public class StoreEntity {
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<CategoryEntity> categories;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<ItemEntity> items;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<OrderEntity> orders;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<OrderItemMappingEntity> orderItems;
 }

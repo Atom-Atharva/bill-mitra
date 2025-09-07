@@ -32,11 +32,6 @@ public class RazorpayUtil {
             // Amount is in currency subunits.
             orderRequest.put("amount", order.getTotalAmount() * 100);
             orderRequest.put("currency", RAZORPAY_API_CURRENCY);
-            orderRequest.put("receipt", order.getId());
-            JSONObject notes = new JSONObject();
-            // Key-value pair to store additional information.
-            notes.put("Cashier", order.getCreatedBy());
-            orderRequest.put("notes", notes);
 
             // Create a Payment Order on RazorPay.
             return razorpayClient.orders.create(orderRequest);

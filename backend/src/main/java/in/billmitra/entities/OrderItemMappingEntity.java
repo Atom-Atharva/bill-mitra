@@ -26,6 +26,10 @@ public class OrderItemMappingEntity {
     private OrderEntity order;
 
     @ManyToOne
+    @JoinColumn(name = "store_id")
+    private StoreEntity store;
+
+    @ManyToOne
     @JoinColumn(name = "item_id")
     private ItemEntity item;
 

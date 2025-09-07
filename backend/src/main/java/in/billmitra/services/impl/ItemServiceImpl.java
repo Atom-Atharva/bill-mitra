@@ -45,6 +45,7 @@ public class ItemServiceImpl implements ItemService {
                 .imgUrl(null)
                 .bgColor(request.getBgColor())
                 .category(category)
+                .store(category.getStore())
                 .build();
 
         // Upload Img to S3 Bucket

@@ -2,11 +2,10 @@ package in.billmitra.services.impl;
 
 import com.razorpay.Order;
 import in.billmitra.dto.*;
-import in.billmitra.entities.OrderEntity;
-import in.billmitra.entities.StoreEntity;
-import in.billmitra.entities.UserEntity;
+import in.billmitra.entities.*;
 import in.billmitra.entities.enums.PaymentMethod;
 import in.billmitra.entities.enums.TransactionStatus;
+import in.billmitra.repositories.ItemRepository;
 import in.billmitra.repositories.OrderRepository;
 import in.billmitra.repositories.StoreRepository;
 import in.billmitra.security.CustomUserDetails;
@@ -19,9 +18,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
+    private final ItemRepository itemRepository;
     @Value("${rzp.api.key}")
     private String RAZORPAY_API_PUBLIC_KEY;
     private final OrderRepository orderRepository;
@@ -48,6 +52,35 @@ public class OrderServiceImpl implements OrderService {
                 .paymentMethod(order.getPaymentMethod())
                 .transactionStatus(TransactionStatus.PENDING)
                 .build();
+
+        // Populate ordered items mapping table.
+        List<Long> itemIds = order.getItems().stream()
+                .map(OrderItemRequest::getItemId)
+                .toList();
+
+        // Get List of Items inside store.
+        List<ItemEntity> items = itemRepository.findAllByIdInAndStore_id(itemIds, storeId);
+
+        // Check if any item is invalid.
+        if (items.size() != itemIds.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Some of the items are not available in the store.");
+        }
+
+        // Put the items inside a map for easy retrieval.
+        Map<Long, ItemEntity> itemMap = items.stream()
+                .collect(Collectors.toMap(ItemEntity::getId, item -> item));
+
+        // Linking Ordered Items with the OrderEntity.
+        OrderEntity finalOrderEntity = orderEntity;
+        List<OrderItemMappingEntity> orderItems = order.getItems().stream()
+                .map(reqItem -> OrderItemMappingEntity.builder()
+                        .order(finalOrderEntity)
+                        .store(store)
+                        .item(itemMap.get(reqItem.getItemId()))
+                        .quantity(reqItem.getQuantity())
+                        .build())
+                .toList();
+        orderEntity.setItems(orderItems);
 
         // If payment mode is CASH fast-forward 'SUCCESS'.
         if (order.getPaymentMethod().equals(PaymentMethod.CASH)) {

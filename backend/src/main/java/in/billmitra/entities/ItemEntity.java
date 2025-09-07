@@ -43,6 +43,10 @@ public class ItemEntity {
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private StoreEntity store;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Timestamp createdAt;

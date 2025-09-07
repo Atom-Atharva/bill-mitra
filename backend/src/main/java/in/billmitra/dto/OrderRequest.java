@@ -1,7 +1,6 @@
 package in.billmitra.dto;
 
 import in.billmitra.entities.enums.PaymentMethod;
-import in.billmitra.entities.enums.TransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequest {
-    private Long storeId;
-    private Long userId;
     private Double taxFee;
     private Double discount;
     private Double totalAmount;
