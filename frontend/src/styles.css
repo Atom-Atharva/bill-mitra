@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+body {
+  @apply m-0 font-sans;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  @apply font-mono
+}
