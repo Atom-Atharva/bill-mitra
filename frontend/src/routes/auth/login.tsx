@@ -1,9 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router'
+import BackgroundImage from "@/components/auth/BackgroundImage";
+import LoginForm from "@/components/auth/LoginForm";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/auth/login')({
-  component: RouteComponent,
-})
+export const Route = createFileRoute("/auth/login")({
+    component: RouteComponent,
+});
 
 function RouteComponent() {
-  return <div>Hello "/auth/login"!</div>
+    const url = "/images/login_bg.jpeg";
+    return (
+        <BackgroundImage imgUrl={url} >
+            <LoginForm />
+        </BackgroundImage>
+    );
 }

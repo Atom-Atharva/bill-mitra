@@ -6,8 +6,16 @@ export const Route = createFileRoute('/')({
 
 function App() {
   return (
-    <div className="text-4xl">
-      Home Landing Page.
+    <div>
+      <h1 className="text-4xl">Home Landing Page.</h1>
+      <div className='flex gap-2'>
+        <div>
+          <a href='./auth/login'>LOGIN</a>
+        </div>
+        <div>
+          <a href='./auth/register'>REGISTER</a>
+        </div>
+      </div>
     </div>
   )
 }

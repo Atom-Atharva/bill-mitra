@@ -1,11 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Gantari:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
-body {
-  @apply m-0 font-sans;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme {
+  --font-header : 'Montserrat', 'sans-serif';
+  --font-body : 'Gantari', 'sans-serif';
 }
 
-code {
-  @apply font-mono
+body {
+  font-family: var(--font-body);
 }
