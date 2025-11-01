@@ -4,6 +4,7 @@
 @theme {
   --font-header : 'Montserrat', 'sans-serif';
   --font-body : 'Gantari', 'sans-serif';
+  --color-error : red;
 }
 
 body {
