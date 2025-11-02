@@ -82,6 +82,7 @@ Now let's get started.
 - Configure SecurityConfig with `@EnableWebSecurity`.
 - Custom CORS Policy, FilterChain, etc.
 - `CustomUserDetails` Class to fetch Custom User for `SecurityContextHolder` - Created for fetching storeId.
+- ![version](https://img.shields.io/badge/version-2.0-green) : Added {isRememberMeChecked} Functionality - if true, set cookie age to 8 hours else 1 hour.
 
 #### Managing Categories
 

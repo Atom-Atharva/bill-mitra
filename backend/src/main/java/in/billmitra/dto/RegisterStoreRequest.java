@@ -12,4 +12,5 @@ public class RegisterStoreRequest {
     private String userEmail;
     private String userPassword;
     private String storeName;
+    private Boolean isRememberMeChecked = false;
 }

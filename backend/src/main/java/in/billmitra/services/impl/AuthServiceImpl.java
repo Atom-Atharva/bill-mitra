@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         try {
-            registerUserAndLogin(registerUserRequest, store.getId(), response);
+            registerUserAndLogin(registerUserRequest, store.getId(),request.getIsRememberMeChecked(), response);
         } catch (ResponseStatusException e) {
             // Delete Store
             storeRepository.delete(store);
@@ -111,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
         cookie.setHttpOnly(true);
         cookie.setSecure(false); // true in production (HTTPS only)
         cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60); // 1 day in seconds
+        cookie.setMaxAge(request.getIsRememberMeChecked() ? (8 * 60 * 60) : (60 * 60));
 
         // Add Cookie in Http Response
         response.addCookie(cookie);
@@ -128,7 +128,7 @@ public class AuthServiceImpl implements AuthService {
         response.addCookie(cookie);
     }
 
-    private void registerUserAndLogin(RegisterUserRequest request, Long storeId, HttpServletResponse response) {
+    private void registerUserAndLogin(RegisterUserRequest request, Long storeId, Boolean isRememberMeChecked, HttpServletResponse response) {
         try {
             saveUserInStore(request, storeId);
         } catch (ResponseStatusException e) {
@@ -140,6 +140,7 @@ public class AuthServiceImpl implements AuthService {
         AuthRequest authRequest = AuthRequest.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
+                .isRememberMeChecked(isRememberMeChecked)
                 .build();
 
         try {
