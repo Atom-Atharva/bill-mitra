@@ -1,12 +1,12 @@
 import TextField from "@mui/material/TextField";
 import FormHeadTag from "./FormHeadTag";
 import Button from "@mui/material/Button";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { registerUser } from "@/apis/registerUser";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import { registerStoreAndUser } from "@/apis/registerStoreAndUser";
 
 const RegisterForm = () => {
     const heading = "Register Your Store";
@@ -20,10 +20,13 @@ const RegisterForm = () => {
     const [checked, setChecked] = useState(false);
     const [formError, setFormError] = useState("");
 
+    const navigate = useNavigate();
+
     const { mutate, isPending, isError, error } = useMutation({
-        mutationFn: registerUser,
-        onSuccess: (data) => {
-            console.log("Registered and LoggedIn", data);
+        mutationFn: registerStoreAndUser,
+
+        onSuccess: () => {
+            navigate({ to: "/home" });
         }
     })
 

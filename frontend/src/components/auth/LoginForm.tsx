@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import FormHeadTag from "./FormHeadTag";
 import TextField from "@mui/material/TextField"
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -16,11 +16,13 @@ const LoginForm = () => {
     const [password, setPassword] = useState("");
     const [checked, setChecked] = useState(false);
 
+    const navigate = useNavigate();
+
     const { mutate, isPending, isError, error } = useMutation({
         mutationFn: loginUser,
 
-        onSuccess: (data) => {
-            console.log("Logged in", data);
+        onSuccess: () => {
+            navigate({ to: '/home' });
         }
     })
 
