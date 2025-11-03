@@ -27,7 +27,7 @@ public class AuthController {
             authService.registerStoreAndOwner(request, response);
         } catch (ResponseStatusException e) {
             e.printStackTrace();
-            return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getReason()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(e.getMessage()));
