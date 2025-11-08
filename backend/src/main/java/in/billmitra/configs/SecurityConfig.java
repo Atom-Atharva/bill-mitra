@@ -46,7 +46,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/register/user",
                                 "/categories/admin/**",
-                                "/items/admin/**"
+                                "/items/admin/**",
+                                "/users/admin/**"
                         ).hasAnyRole("OWNER", "MANAGER")
                         .anyRequest().authenticated()
                 )

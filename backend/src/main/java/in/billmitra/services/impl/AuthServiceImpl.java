@@ -1,6 +1,7 @@
 package in.billmitra.services.impl;
 
 import in.billmitra.dto.AuthRequest;
+import in.billmitra.dto.CreatedByDto;
 import in.billmitra.dto.RegisterStoreRequest;
 import in.billmitra.dto.RegisterUserRequest;
 import in.billmitra.entities.enums.Role;
@@ -88,9 +89,10 @@ public class AuthServiceImpl implements AuthService {
         // Get Store from SecurityContextHolder
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long storeId = customUserDetails.getStoreId();
+        Long userId = customUserDetails.getUser().getId();
 
         try {
-            saveUserInStore(request, storeId);
+            saveUserInStore(request, storeId, userId);
         } catch (ResponseStatusException e) {
             e.printStackTrace();
             throw e;
@@ -130,7 +132,7 @@ public class AuthServiceImpl implements AuthService {
 
     private void registerUserAndLogin(RegisterUserRequest request, Long storeId, Boolean isRememberMeChecked, HttpServletResponse response) {
         try {
-            saveUserInStore(request, storeId);
+            saveUserInStore(request, storeId,null);
         } catch (ResponseStatusException e) {
             e.printStackTrace();
             throw e;
@@ -151,8 +153,12 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    private void saveUserInStore(RegisterUserRequest request, Long storeId) {
+    private void saveUserInStore(RegisterUserRequest request, Long storeId, Long userId) {
         StoreEntity store = storeRepository.findById(storeId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Store not found"));
+        UserEntity createdBy = null;
+        if (userId != null) {
+            createdBy = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        }
 
         Role role = (request.getRole() != null) ? request.getRole() : Role.EMPLOYEE;
         String hashedPassword = passwordEncoder.encode(request.getPassword());
@@ -163,6 +169,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(hashedPassword)
                 .role(role)
                 .store(store)
+                .createdBy(createdBy)
                 .build();
 
         try {

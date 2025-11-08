@@ -35,6 +35,9 @@ public class UserEntity {
     @JoinColumn(name = "store_id")
     private StoreEntity store;
 
+    @ManyToOne
+    private UserEntity createdBy;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Timestamp createdAt;
