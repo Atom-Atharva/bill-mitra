@@ -13,4 +13,8 @@ export const API = {
         registerStore: getEnv("VITE_API_AUTH_REGISTER_STORE"),
         logout: getEnv("VITE_API_AUTH_LOGOUT"),
     },
+    // User APIs
+    USER: {
+        currentUserInfo: getEnv("VITE_API_USER_CURRENT"),
+    },
 };

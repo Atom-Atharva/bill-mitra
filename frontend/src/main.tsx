@@ -10,6 +10,10 @@ import reportWebVitals from './reportWebVitals.ts'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+import { store } from './store/store.ts'
+import { Provider } from 'react-redux'
+
+
 // Create a new router instance
 const router = createRouter({
   routeTree,
@@ -35,11 +39,13 @@ const rootElement = document.getElementById('app')
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
-    <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </StrictMode>,
+    <Provider store={store}>
+      <StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </StrictMode>
+    </Provider>,
   )
 }
 
