@@ -3,7 +3,9 @@ import RegisterForm from '@/components/auth/RegisterForm';
 import type { RootState } from '@/store/store';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { currentUserInfo } from '@/apis/currentUserInfo';
+import { addUser } from '@/store/userSlice';
 
 export const Route = createFileRoute('/auth/register')({
   component: RouteComponent,
@@ -12,12 +14,29 @@ export const Route = createFileRoute('/auth/register')({
 function RouteComponent() {
   const user = useSelector((state: RootState) => state.user.user)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user) {
-      navigate({ to: "/home" })
+      navigate({ to: "/home" });
+      return;
     }
-  }, [])
+
+    const checkAuth = async () => {
+      try {
+        const fetchedUser = await currentUserInfo();
+        if (fetchedUser) {
+          dispatch(addUser(fetchedUser as any));
+          navigate({ to: "/home" });
+        }
+      } catch (err) {
+        // not authenticated
+        console.log("User not authenticated.")
+      }
+    };
+
+    void checkAuth();
+  }, [user, navigate, dispatch])
 
   const url = "/images/register_bg.jpeg";
   return (

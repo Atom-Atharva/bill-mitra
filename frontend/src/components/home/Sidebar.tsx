@@ -6,12 +6,28 @@ import StoreIcon from '@mui/icons-material/Store';
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { logoutUser } from '@/apis/logoutUser';
-import { useNavigate } from '@tanstack/react-router';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
+import { removeUser } from '@/store/userSlice';
 
-const Sidebar = () => {
+export const TABS = {
+    STORE: "STORE",
+    ACCOUNT: "ACCOUNT",
+    SETTINGS: "SETTINGS",
+} as const;
+
+type TabTypes = keyof typeof TABS;
+
+interface SidebarProps {
+    activeTabs: TabTypes;
+    setActiveTabs: React.Dispatch<React.SetStateAction<TabTypes>>;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ activeTabs, setActiveTabs }) => {
     const [isExtended, setExtended] = useState(false);
-    const navigate = useNavigate();
+    const user = useSelector((state: RootState) => state.user.user);
+    const dispatch = useDispatch();
 
     const expandMenu = () => {
         setExtended(!isExtended);
@@ -20,7 +36,7 @@ const Sidebar = () => {
     const { mutate, isPending } = useMutation({
         mutationFn: logoutUser,
         onSuccess: () => {
-            navigate({ to: '/' })
+            dispatch(removeUser());
         }
     })
 
@@ -28,6 +44,10 @@ const Sidebar = () => {
         e.preventDefault();
         if (isPending) return;
         mutate();
+    }
+
+    const handleSwitchTabs = (e: TabTypes) => {
+        setActiveTabs(e);
     }
 
     return (
@@ -47,18 +67,25 @@ const Sidebar = () => {
                 </div>
 
                 <div className='flex flex-col border-t border-neutral-400'>
-                    <div className="flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300">
+                    <div className={`flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300 ${activeTabs === TABS.STORE && "bg-gray-200"}`}
+                        onClick={() => handleSwitchTabs(TABS.STORE)}>
                         <StoreIcon fontSize="large" color="primary" />
                         {isExtended && <span>Store</span>}
                     </div>
-                    <div className="flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300">
+                    <div className={`flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300 ${activeTabs === TABS.ACCOUNT && "bg-gray-200"}`}
+                        onClick={() => handleSwitchTabs(TABS.ACCOUNT)}>
                         <ManageAccountsIcon fontSize="large" color="primary" />
                         {isExtended && <span>Account</span>}
                     </div>
-                    <div className="flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300">
-                        <SettingsIcon fontSize="large" color="primary" />
-                        {isExtended && <span>Settings</span>}
-                    </div>
+                    {
+                        (user?.role === "MANAGER" || user?.role === "OWNER") &&
+                        <div className={`flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300 ${activeTabs === TABS.SETTINGS && "bg-gray-200"}`}
+                            onClick={() => handleSwitchTabs(TABS.SETTINGS)}
+                        >
+                            <SettingsIcon fontSize="large" color="primary" />
+                            {isExtended && <span>Settings</span>}
+                        </div>
+                    }
                 </div>
             </div>
 
