@@ -16,5 +16,6 @@ export const API = {
     // User APIs
     USER: {
         currentUserInfo: getEnv("VITE_API_USER_CURRENT"),
+        getAllEmployees: getEnv("VITE_API_ALL_EMPLOYEES")
     },
 };
