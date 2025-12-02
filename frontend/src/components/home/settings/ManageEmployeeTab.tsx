@@ -3,6 +3,7 @@ import { addAllEmployees } from "@/store/employeeSlice"
 import type { RootState } from "@/store/store"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import CustomEmployeesTable from "./CustomEmployeesTable"
 
 const ManageEmployeeTab = () => {
     const employees = useSelector((state: RootState) => state.employee.employees)
@@ -29,7 +30,9 @@ const ManageEmployeeTab = () => {
     }, [employees])
 
     return (
-        <div>ManageEmployeeTab</div>
+        <div>
+            <CustomEmployeesTable />
+        </div>
     )
 }
 
