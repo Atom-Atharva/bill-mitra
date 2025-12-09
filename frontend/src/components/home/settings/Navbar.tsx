@@ -14,10 +14,34 @@ const Navbar: React.FC<NavbarProps> = ({ activeTabs, setActiveTabs }) => {
     }
 
     return (
-        <div className="border w-9/12 flex rounded-xl">
-            <div className={`w-1/3 text-center p-2 cursor-pointer hover:bg-gray-300 rounded-l-xl ${activeTabs === TABS.EMPLOYEE && "bg-gray-200"}`} onClick={() => handleSwitchTabs(TABS.EMPLOYEE)}>Employee</div>
-            <div className={`w-1/3 text-center p-2 cursor-pointer hover:bg-gray-300 ${activeTabs === TABS.CATEGORY && "bg-gray-200"}`} onClick={() => handleSwitchTabs(TABS.CATEGORY)}>Category</div>
-            <div className={`w-1/3 text-center p-2 cursor-pointer hover:bg-gray-300 rounded-r-xl ${activeTabs === TABS.ITEM && "bg-gray-200"}`} onClick={() => handleSwitchTabs(TABS.ITEM)}>Item</div>
+        <div className="bg-white w-9/12 flex rounded-xl shadow-md border border-gray-200 p-1 gap-1">
+            <div
+                className={`w-1/3 text-center py-3 px-4 cursor-pointer rounded-lg font-medium transition-all duration-200 ${activeTabs === TABS.EMPLOYEE
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : "bg-transparent text-gray-700 hover:bg-gray-100"
+                    }`}
+                onClick={() => handleSwitchTabs(TABS.EMPLOYEE)}
+            >
+                Employee
+            </div>
+            <div
+                className={`w-1/3 text-center py-3 px-4 cursor-pointer rounded-lg font-medium transition-all duration-200 ${activeTabs === TABS.CATEGORY
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : "bg-transparent text-gray-700 hover:bg-gray-100"
+                    }`}
+                onClick={() => handleSwitchTabs(TABS.CATEGORY)}
+            >
+                Category
+            </div>
+            <div
+                className={`w-1/3 text-center py-3 px-4 cursor-pointer rounded-lg font-medium transition-all duration-200 ${activeTabs === TABS.ITEM
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : "bg-transparent text-gray-700 hover:bg-gray-100"
+                    }`}
+                onClick={() => handleSwitchTabs(TABS.ITEM)}
+            >
+                Item
+            </div>
         </div>
     )
 }

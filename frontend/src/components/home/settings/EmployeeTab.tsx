@@ -14,10 +14,10 @@ const EmployeeTab = () => {
     const [activeTabs, setActiveTabs] = useState<TabTypes>(TABS.MANAGE)
 
     return (
-        <div className="h-full w-full rounded-xl border">
+        <div className="h-full w-full rounded-xl bg-white shadow-lg border border-gray-200 overflow-hidden">
             <ToggleBar activeTabs={activeTabs} setActiveTabs={setActiveTabs} />
 
-            <div className="p-4">
+            <div>
                 {activeTabs === TABS.MANAGE && <ManageEmployeeTab />}
                 {activeTabs === TABS.ONBOARD && <OnboardTab />}
             </div>

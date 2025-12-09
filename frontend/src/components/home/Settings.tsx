@@ -16,7 +16,7 @@ const Settings = () => {
     const [activeTabs, setActiveTabs] = useState<TabTypes>(TABS.EMPLOYEE);
 
     return (
-        <div className="w-full h-full flex flex-col items-center p-4 gap-2">
+        <div className="w-full h-full flex flex-col items-center p-8 gap-6 bg-gray-50">
             <Navbar activeTabs={activeTabs} setActiveTabs={setActiveTabs} />
 
             {activeTabs === TABS.ITEM && <ItemsTab />}

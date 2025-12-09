@@ -52,11 +52,13 @@ function RouteComponent() {
         if (!user) mutate();
     }, [user])
 
-    return <div className='h-screen w-screen flex flex-row justify-between'>
+    return <div className='h-screen w-screen flex flex-row justify-between bg-gray-50'>
         <Sidebar activeTabs={activeTabs} setActiveTabs={setActiveTabs} />
-        {activeTabs === TABS.STORE && <Store />}
-        {activeTabs === TABS.ACCOUNT && <Account />}
-        {activeTabs === TABS.SETTINGS && <Settings />}
+        <div className="flex-1 overflow-hidden">
+            {activeTabs === TABS.STORE && <Store />}
+            {activeTabs === TABS.ACCOUNT && <Account />}
+            {activeTabs === TABS.SETTINGS && <Settings />}
+        </div>
         <Cart />
     </div>
 }

@@ -27,12 +27,18 @@ export const employeeSlice = createSlice({
         addAllEmployees: (state, action: PayloadAction<User[]>) => {
             state.employees = action.payload;
         },
-        removeEmployee: (state, action: PayloadAction<User>) => {
-            state.employees.filter((emp) => emp.id !== action.payload.id);
+        addEmployee: (state, action: PayloadAction<User>) => {
+            state.employees.push(action.payload);
+        },
+        removeEmployee: (state, action: PayloadAction<bigint>) => {
+            state.employees = state.employees.filter(
+                (emp) => emp.id !== action.payload
+            );
         },
     },
 });
 
-export const { addAllEmployees, removeEmployee } = employeeSlice.actions;
+export const { addAllEmployees, addEmployee, removeEmployee } =
+    employeeSlice.actions;
 
 export default employeeSlice.reducer;

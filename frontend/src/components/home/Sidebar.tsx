@@ -53,37 +53,40 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTabs, setActiveTabs }) => {
     return (
         <div
             className={`
-                h-screen border-r flex flex-col justify-between
-                transition-all duration-300
-                ${isExtended ? "w-2/12" : "w-1/24"}
+                h-screen bg-linear-to-b from-gray-50 to-white border-r border-gray-200 shadow-lg flex flex-col justify-between
+                transition-all duration-300 ease-in-out
+                ${isExtended ? "w-64" : "w-20"}
             `}
         >
             <div>
-                <div className={`group flex p-2 hover:bg-gray-400 transition-all duration-300 cursor-pointer ${isExtended ? "bg-gray-300" : "bg-white"}`} onClick={expandMenu}>
+                <div className={`group flex items-center justify-center p-4 hover:bg-blue-50 transition-all duration-300 cursor-pointer border-b border-gray-200 ${isExtended ? "bg-blue-50" : ""}`} onClick={expandMenu}>
                     <MenuIcon
                         fontSize="large"
-                        className="transition-all duration-300 group-hover:text-white"
+                        className="text-gray-700 transition-all duration-300 group-hover:text-blue-600"
                     />
                 </div>
 
-                <div className='flex flex-col border-t border-neutral-400'>
-                    <div className={`flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300 ${activeTabs === TABS.STORE && "bg-gray-200"}`}
+                <div className='flex flex-col mt-4 px-2 gap-2'>
+                    <div className={`flex items-center cursor-pointer gap-3 p-3 rounded-lg transition-all duration-300 hover:bg-blue-50 ${activeTabs === TABS.STORE ? "bg-blue-100 shadow-sm" : ""
+                        }`}
                         onClick={() => handleSwitchTabs(TABS.STORE)}>
-                        <StoreIcon fontSize="large" color="primary" />
-                        {isExtended && <span>Store</span>}
+                        <StoreIcon fontSize="large" className={activeTabs === TABS.STORE ? "text-blue-600" : "text-gray-600"} />
+                        {isExtended && <span className={`font-medium ${activeTabs === TABS.STORE ? "text-blue-700" : "text-gray-700"}`}>Store</span>}
                     </div>
-                    <div className={`flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300 ${activeTabs === TABS.ACCOUNT && "bg-gray-200"}`}
+                    <div className={`flex items-center cursor-pointer gap-3 p-3 rounded-lg transition-all duration-300 hover:bg-blue-50 ${activeTabs === TABS.ACCOUNT ? "bg-blue-100 shadow-sm" : ""
+                        }`}
                         onClick={() => handleSwitchTabs(TABS.ACCOUNT)}>
-                        <ManageAccountsIcon fontSize="large" color="primary" />
-                        {isExtended && <span>Account</span>}
+                        <ManageAccountsIcon fontSize="large" className={activeTabs === TABS.ACCOUNT ? "text-blue-600" : "text-gray-600"} />
+                        {isExtended && <span className={`font-medium ${activeTabs === TABS.ACCOUNT ? "text-blue-700" : "text-gray-700"}`}>Account</span>}
                     </div>
                     {
                         (user?.role === "MANAGER" || user?.role === "OWNER") &&
-                        <div className={`flex items-center cursor-pointer gap-2 p-2 transition-all duration-300 hover:bg-gray-300 ${activeTabs === TABS.SETTINGS && "bg-gray-200"}`}
+                        <div className={`flex items-center cursor-pointer gap-3 p-3 rounded-lg transition-all duration-300 hover:bg-blue-50 ${activeTabs === TABS.SETTINGS ? "bg-blue-100 shadow-sm" : ""
+                            }`}
                             onClick={() => handleSwitchTabs(TABS.SETTINGS)}
                         >
-                            <SettingsIcon fontSize="large" color="primary" />
-                            {isExtended && <span>Settings</span>}
+                            <SettingsIcon fontSize="large" className={activeTabs === TABS.SETTINGS ? "text-blue-600" : "text-gray-600"} />
+                            {isExtended && <span className={`font-medium ${activeTabs === TABS.SETTINGS ? "text-blue-700" : "text-gray-700"}`}>Settings</span>}
                         </div>
                     }
                 </div>
@@ -91,20 +94,20 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTabs, setActiveTabs }) => {
 
             <div
                 className={`
-                            group flex flex-col border-t border-neutral-400 py-2 transition-all duration-300 
-                            ${!isPending ? "hover:bg-red-500 hover:text-white cursor-pointer" : "opacity-60 cursor-not-allowed"}
+                            group flex flex-col border-t border-gray-200 mt-2 transition-all duration-300 
+                            ${!isPending ? "hover:bg-red-50 cursor-pointer" : "opacity-60 cursor-not-allowed"}
                         `}
                 onClick={handleLogout}
             >
-                <div className="flex items-center gap-3 px-2">
+                <div className="flex items-center gap-3 p-4 mx-2 my-2 rounded-lg">
                     {!isPending ?
                         <>
                             <LogoutIcon
                                 fontSize="large"
-                                className="text-red-600 transition-all duration-300 group-hover:text-white"
+                                className="text-red-500 transition-all duration-300 group-hover:text-red-600"
                             />
                             {isExtended && (
-                                <span className='text-lg transition-all duration-300'>
+                                <span className='text-base font-medium text-red-500 transition-all duration-300 group-hover:text-red-600'>
                                     Logout
                                 </span>
                             )}
@@ -113,7 +116,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTabs, setActiveTabs }) => {
                         <>
                             <CircularProgress size="2rem" color='error' />
                             {isExtended && (
-                                <span className='text-lg transition-all duration-300'>
+                                <span className='text-base font-medium text-gray-500'>
                                     Loading...
                                 </span>
                             )}
