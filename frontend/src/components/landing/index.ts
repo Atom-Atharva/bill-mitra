@@ -1,0 +1,12 @@
+export { NavigationBar } from "./NavigationBar";
+export { HeroSection } from "./HeroSection";
+export { FeaturesSection } from "./FeaturesSection";
+export { BenefitsSection } from "./BenefitsSection";
+export { TestimonialsSection } from "./TestimonialsSection";
+export { HowItWorksSection } from "./HowItWorksSection";
+export { DemoSection } from "./DemoSection";
+export { DeveloperSection } from "./DeveloperSection";
+export { FAQSection } from "./FAQSection";
+export { ContactSection } from "./ContactSection";
+export { CTASection } from "./CTASection";
+export { Footer } from "./Footer";

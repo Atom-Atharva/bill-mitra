@@ -1,4 +1,11 @@
+import {
+  BenefitsSection, ContactSection, CTASection, DemoSection,
+  DeveloperSection, FAQSection, FeaturesSection, Footer,
+  HeroSection, HowItWorksSection, NavigationBar,
+  TestimonialsSection
+} from '@/components/landing'
 import { createFileRoute } from '@tanstack/react-router'
+
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -6,16 +13,19 @@ export const Route = createFileRoute('/')({
 
 function App() {
   return (
-    <div>
-      <h1 className="text-4xl">Home Landing Page.</h1>
-      <div className='flex gap-2'>
-        <div>
-          <a href='./auth/login'>LOGIN</a>
-        </div>
-        <div>
-          <a href='./auth/register'>REGISTER</a>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white">
+      <NavigationBar />
+      <HeroSection />
+      <FeaturesSection />
+      <BenefitsSection />
+      <TestimonialsSection />
+      <HowItWorksSection />
+      <DemoSection />
+      <DeveloperSection />
+      <FAQSection />
+      <ContactSection />
+      <CTASection />
+      <Footer />
     </div>
   )
 }
