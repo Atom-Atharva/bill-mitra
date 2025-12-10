@@ -28,6 +28,7 @@ public class ItemEntity {
     @Column(nullable = false)
     private String name;
 
+    @Lob
     private String description;
 
     @Column(nullable = false)

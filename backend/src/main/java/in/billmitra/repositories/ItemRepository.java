@@ -11,4 +11,5 @@ public interface ItemRepository extends JpaRepository<ItemEntity,Long> {
     Optional<ItemEntity> findByCategory_idAndName(Long categoryId, String name);
     List<ItemEntity> findAllByCategory_id(Long categoryId);
     List<ItemEntity> findAllByIdInAndStore_id(List<Long> itemIds, Long storeId);
+    List<ItemEntity> findAllByStore_id(Long storeId);
 }

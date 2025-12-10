@@ -28,6 +28,7 @@ public class CategoryEntity {
     @Column(nullable = false)
     private String name;
 
+    @Lob
     private String description;
 
     @Column(name = "img_url")

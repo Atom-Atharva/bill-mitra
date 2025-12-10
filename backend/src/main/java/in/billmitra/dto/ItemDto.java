@@ -12,4 +12,5 @@ public class ItemDto {
     private Double price;
     private String imgUrl;
     private String bgColor;
+    private String categoryName;
 }

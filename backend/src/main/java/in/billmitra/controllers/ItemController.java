@@ -33,7 +33,7 @@ public class ItemController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ItemListResponse> getAllItems(@RequestParam Long categoryId) {
+    public ResponseEntity<ItemListResponse> getAllItems(@RequestParam(required = false) Long categoryId) {
         try {
             ItemListResponse response = itemService.getAllItems(categoryId);
             return ResponseEntity.ok(response);

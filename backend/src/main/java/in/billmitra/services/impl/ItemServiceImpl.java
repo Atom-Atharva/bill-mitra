@@ -8,10 +8,12 @@ import in.billmitra.entities.CategoryEntity;
 import in.billmitra.entities.ItemEntity;
 import in.billmitra.repositories.CategoryRepository;
 import in.billmitra.repositories.ItemRepository;
+import in.billmitra.security.CustomUserDetails;
 import in.billmitra.services.FileUploadService;
 import in.billmitra.services.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -91,6 +93,22 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemListResponse getAllItems(Long categoryId) {
+        // If categoryId is empty
+        if (categoryId == null) {
+            // fetch items by storeId
+            CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Long storeId = userDetails.getStoreId();
+
+            if(itemRepository.findAllByStore_id(storeId).isEmpty()){
+                return ItemListResponse.builder()
+                        .items(List.of())
+                        .message("No Items found")
+                        .build();
+            }
+
+            return convertToItemListResponse(itemRepository.findAllByStore_id(storeId));
+        }
+
         // If a category doesn't exist in store
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found in store.");
@@ -146,6 +164,7 @@ public class ItemServiceImpl implements ItemService {
                 .imgUrl(item.getImgUrl())
                 .price(item.getPrice())
                 .bgColor(item.getBgColor())
+                .categoryName(item.getCategory().getName())
                 .build();
     }
 }
