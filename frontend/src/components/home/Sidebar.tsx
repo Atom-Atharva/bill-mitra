@@ -10,6 +10,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import { removeUser } from '@/store/userSlice';
+import { removeAllCategories } from '@/store/categorySlice';
+import { removeAllItems } from '@/store/itemSlice';
+import { clearCart } from '@/store/cartSlice';
+import { removeAllEmployees } from '@/store/employeeSlice';
 
 export const TABS = {
     STORE: "STORE",
@@ -37,6 +41,10 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTabs, setActiveTabs }) => {
         mutationFn: logoutUser,
         onSuccess: () => {
             dispatch(removeUser());
+            dispatch(removeAllCategories())
+            dispatch(removeAllItems());
+            dispatch(clearCart());
+            dispatch(removeAllEmployees());
         }
     })
 
