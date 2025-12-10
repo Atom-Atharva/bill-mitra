@@ -21,4 +21,16 @@ export const API = {
         deleteUser: getEnv("VITE_API_DELETE_USER"),
         changePassword: getEnv("VITE_API_CHANGE_PASSWORD"),
     },
+    // Category APIs
+    CATEGORY: {
+        getAllCategories: getEnv("VITE_API_ALL_CATEGORIES"),
+        addCategory: getEnv("VITE_API_ADD_CATEGORY"),
+        deleteCategory: getEnv("VITE_API_DELETE_CATEGORY"),
+    },
+    // Items APIs
+    ITEMS: {
+        getAllItems: getEnv("VITE_API_ALL_ITEMS"),
+        addItem: getEnv("VITE_API_ADD_ITEM"),
+        deleteItem: getEnv("VITE_API_DELETE_ITEM"),
+    },
 };
