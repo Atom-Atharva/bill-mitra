@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "@/store/store";
+import { removeFromCart, updateQuantity, clearCart } from "@/store/cartSlice";
 import CartItem from "./cart/CartItem";
 import CartSummary from "./cart/CartSummary";
 import { generateReceipt } from "./cart/generateReceipt";
@@ -9,19 +12,10 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-interface CartItem {
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
-}
-
 const Cart = () => {
-    // TODO: Replace with actual cart state from Redux/Context
-    const [cartItems, setCartItems] = useState<CartItem[]>([
-        { id: 1, name: "Coffee", price: 150, quantity: 2 },
-        { id: 2, name: "Sandwich", price: 200, quantity: 1 },
-    ]);
+    const dispatch = useDispatch();
+    const cartItems = useSelector((state: RootState) => state.cart.items);
+
     const [paymentMethod, setPaymentMethod] = useState<"CASH" | "UPI" | null>(null);
     const [showDiscardDialog, setShowDiscardDialog] = useState(false);
 
@@ -29,21 +23,21 @@ const Cart = () => {
     const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     const handleRemoveItem = (id: number) => {
-        setCartItems(cartItems.filter(item => item.id !== id));
+        dispatch(removeFromCart(id));
     };
 
     const handleIncreaseQuantity = (id: number) => {
-        setCartItems(cartItems.map(item =>
-            item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-        ));
+        const item = cartItems.find(i => i.id === id);
+        if (item) {
+            dispatch(updateQuantity({ id, quantity: item.quantity + 1 }));
+        }
     };
 
     const handleDecreaseQuantity = (id: number) => {
-        setCartItems(cartItems.map(item =>
-            item.id === id && item.quantity > 1
-                ? { ...item, quantity: item.quantity - 1 }
-                : item
-        ));
+        const item = cartItems.find(i => i.id === id);
+        if (item && item.quantity > 1) {
+            dispatch(updateQuantity({ id, quantity: item.quantity - 1 }));
+        }
     };
 
     const handlePayment = (method: "CASH" | "UPI") => {
@@ -57,7 +51,7 @@ const Cart = () => {
     };
 
     const handleDiscardAll = () => {
-        setCartItems([]);
+        dispatch(clearCart());
         setPaymentMethod(null);
         setShowDiscardDialog(false);
     };

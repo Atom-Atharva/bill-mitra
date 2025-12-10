@@ -1,3 +1,5 @@
+import { formatIndianPrice } from "@/utils/formatIndianPrice";
+
 interface CartItem {
     id: number;
     name: string;
@@ -153,10 +155,10 @@ export const generateReceipt = (
                     <div class="item">
                         <div class="item-header">
                             <span>${item.name}</span>
-                            <span>₹${item.price * item.quantity}</span>
+                            <span>₹${formatIndianPrice(item.price * item.quantity)}</span>
                         </div>
                         <div class="item-details">
-                            <span>₹${item.price} × ${item.quantity}</span>
+                            <span>₹${formatIndianPrice(item.price)} × ${item.quantity}</span>
                         </div>
                     </div>
                 `
@@ -176,7 +178,7 @@ export const generateReceipt = (
             <div class="total">
                 <div class="total-row">
                     <span>TOTAL</span>
-                    <span>₹${subtotal}</span>
+                    <span>₹${formatIndianPrice(subtotal)}</span>
                 </div>
             </div>
 

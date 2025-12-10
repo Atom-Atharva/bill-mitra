@@ -1,6 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { formatIndianPrice } from "@/utils/formatIndianPrice";
 
 interface CartItemProps {
     item: {
@@ -22,7 +23,7 @@ const CartItem = ({ item, onRemove, onIncrease, onDecrease }: CartItemProps) => 
                     <div className="flex items-start justify-between mb-3">
                         <div>
                             <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                            <p className="text-xs text-gray-500 mt-1">₹{item.price} each</p>
+                            <p className="text-xs text-gray-500 mt-1">₹{formatIndianPrice(item.price)} each</p>
                         </div>
                         <button
                             onClick={() => onRemove(item.id)}
@@ -53,7 +54,7 @@ const CartItem = ({ item, onRemove, onIncrease, onDecrease }: CartItemProps) => 
                             </button>
                         </div>
                         <div className="text-right">
-                            <span className="text-lg font-bold text-gray-900">₹{item.price * item.quantity}</span>
+                            <span className="text-lg font-bold text-gray-900">₹{formatIndianPrice(item.price * item.quantity)}</span>
                         </div>
                     </div>
                 </div>

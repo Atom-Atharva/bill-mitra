@@ -4,6 +4,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { formatIndianPrice } from "@/utils/formatIndianPrice";
 
 interface Item {
     id: number;
@@ -71,7 +72,7 @@ const ItemCard = ({ item, onInfo, onEdit, onDelete }: ItemCardProps) => {
 
                 {/* Price badge on image */}
                 <div className="absolute bottom-2 left-2 bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-lg font-bold text-lg">
-                    ₹{item.price}
+                    ₹{formatIndianPrice(item.price)}
                 </div>
             </div>
             <div className="p-4">

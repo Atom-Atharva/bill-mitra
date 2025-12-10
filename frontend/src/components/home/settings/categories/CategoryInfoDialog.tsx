@@ -7,6 +7,7 @@ import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllItems } from "@/apis/fetchAllItems";
 import { addAllItems } from "@/store/itemSlice";
+import { formatIndianPrice } from "@/utils/formatIndianPrice";
 
 interface Category {
     id: number;
@@ -144,7 +145,7 @@ const CategoryInfoDialog = ({ open, category, onClose }: CategoryInfoDialogProps
                                                 <h5 className="font-bold text-gray-800 text-sm line-clamp-1 mb-1">{item.name}</h5>
                                                 <p className="text-xs text-gray-600 line-clamp-2 mb-2">{item.description || 'No description'}</p>
                                                 <div className="inline-block bg-green-600 text-white px-2 py-1 rounded-md text-xs font-bold">
-                                                    ₹{item.price}
+                                                    ₹{formatIndianPrice(item.price)}
                                                 </div>
                                             </div>
                                         </div>

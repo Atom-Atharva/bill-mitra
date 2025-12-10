@@ -1,4 +1,5 @@
 import PrintIcon from "@mui/icons-material/Print";
+import { formatIndianPrice } from "@/utils/formatIndianPrice";
 
 interface CartSummaryProps {
     subtotal: number;
@@ -13,7 +14,7 @@ const CartSummary = ({ subtotal, onPayment, onPrintReceipt }: CartSummaryProps) 
                 <div className="border-t-2 border-dashed border-gray-400 pt-4">
                     <div className="flex items-center justify-between mb-4 bg-gray-50 p-3 rounded-lg">
                         <span className="text-lg font-bold text-gray-700">Subtotal</span>
-                        <span className="text-2xl font-bold text-blue-600">₹{subtotal}</span>
+                        <span className="text-2xl font-bold text-blue-600">₹{formatIndianPrice(subtotal)}</span>
                     </div>
                 </div>
 

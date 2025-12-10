@@ -1,5 +1,7 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import { formatIndianPrice } from "@/utils/formatIndianPrice";
 
 interface Item {
     id: number;
@@ -15,9 +17,10 @@ interface ItemInfoDialogProps {
     open: boolean;
     item: Item | null;
     onClose: () => void;
+    onAddToCart?: (item: Item) => void;
 }
 
-const ItemInfoDialog = ({ open, item, onClose }: ItemInfoDialogProps) => {
+const ItemInfoDialog = ({ open, item, onClose, onAddToCart }: ItemInfoDialogProps) => {
     if (!item) return null;
 
     return (
@@ -68,7 +71,7 @@ const ItemInfoDialog = ({ open, item, onClose }: ItemInfoDialogProps) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="bg-green-50 rounded-lg p-4 border-2 border-green-200">
                             <h4 className="text-sm font-semibold text-green-800 mb-2">Price</h4>
-                            <p className="text-3xl font-bold text-green-600">₹{item.price}</p>
+                            <p className="text-3xl font-bold text-green-600">₹{formatIndianPrice(item.price)}</p>
                         </div>
                         <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
                             <h4 className="text-sm font-semibold text-blue-800 mb-2">Category</h4>
@@ -78,9 +81,29 @@ const ItemInfoDialog = ({ open, item, onClose }: ItemInfoDialogProps) => {
                 </div>
             </DialogContent>
             <DialogActions className="p-4 bg-gray-50 border-t">
+                {onAddToCart && (
+                    <Button
+                        onClick={() => {
+                            onAddToCart(item);
+                            onClose();
+                        }}
+                        variant="contained"
+                        size="large"
+                        className="px-8"
+                        startIcon={<AddShoppingCartIcon />}
+                        sx={{
+                            background: 'linear-gradient(to right, #9333ea, #7e22ce)',
+                            '&:hover': {
+                                background: 'linear-gradient(to right, #7e22ce, #6b21a8)',
+                            }
+                        }}
+                    >
+                        Add to Cart
+                    </Button>
+                )}
                 <Button
                     onClick={onClose}
-                    variant="contained"
+                    variant="outlined"
                     size="large"
                     className="px-8"
                 >
