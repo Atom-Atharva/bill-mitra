@@ -159,20 +159,23 @@ const Store = () => {
                     </TextField>
                 </div>
 
-                {/* Category Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {categories.map((category) => {
-                        const categoryItemsCount = filteredItems.filter(item => item.categoryName === category.name).length;
-                        return (
-                            <CategoryCard
-                                key={category.id}
-                                category={category}
-                                itemCount={categoryItemsCount}
-                                onScrollTo={handleCategoryClick}
-                                onInfo={handleCategoryInfo}
-                            />
-                        );
-                    })}
+                {/* Category Cards Carousel */}
+                <div className="relative">
+                    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-purple-400 scrollbar-track-gray-200 hover:scrollbar-thumb-purple-500 scroll-smooth">
+                        {categories.map((category) => {
+                            const categoryItemsCount = filteredItems.filter(item => item.categoryName === category.name).length;
+                            return (
+                                <div key={category.id} className="shrink-0 w-80">
+                                    <CategoryCard
+                                        category={category}
+                                        itemCount={categoryItemsCount}
+                                        onScrollTo={handleCategoryClick}
+                                        onInfo={handleCategoryInfo}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 

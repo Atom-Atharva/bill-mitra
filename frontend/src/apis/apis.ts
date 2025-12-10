@@ -33,4 +33,9 @@ export const API = {
         addItem: getEnv("VITE_API_ADD_ITEM"),
         deleteItem: getEnv("VITE_API_DELETE_ITEM"),
     },
+    // Order APIs
+    ORDER: {
+        placeOrder: getEnv("VITE_API_PLACE_ORDER"),
+        verifySignature: getEnv("VITE_API_VERIFY_SIGNATURE"),
+    },
 };

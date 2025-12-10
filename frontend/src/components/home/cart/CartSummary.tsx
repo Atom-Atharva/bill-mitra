@@ -1,13 +1,13 @@
-import PrintIcon from "@mui/icons-material/Print";
+import CircularProgress from "@mui/material/CircularProgress";
 import { formatIndianPrice } from "@/utils/formatIndianPrice";
 
 interface CartSummaryProps {
     subtotal: number;
     onPayment: (method: "CASH" | "UPI") => void;
-    onPrintReceipt: () => void;
+    isProcessing?: boolean;
 }
 
-const CartSummary = ({ subtotal, onPayment, onPrintReceipt }: CartSummaryProps) => {
+const CartSummary = ({ subtotal, onPayment, isProcessing = false }: CartSummaryProps) => {
     return (
         <div className="border-t-2 border-gray-300 bg-white shadow-inner">
             <div className="p-5 space-y-4">
@@ -21,25 +21,19 @@ const CartSummary = ({ subtotal, onPayment, onPrintReceipt }: CartSummaryProps) 
                 <div className="flex gap-3">
                     <button
                         onClick={() => onPayment("CASH")}
-                        className="flex-1 py-3 bg-linear-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-green-700 shadow-md hover:shadow-lg transition-all"
+                        disabled={isProcessing}
+                        className="flex-1 py-3 bg-linear-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-green-700 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                        Cash
+                        {isProcessing ? <CircularProgress size={20} color="inherit" /> : "Cash"}
                     </button>
                     <button
                         onClick={() => onPayment("UPI")}
-                        className="flex-1 py-3 bg-linear-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all"
+                        disabled={isProcessing}
+                        className="flex-1 py-3 bg-linear-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                        UPI
+                        {isProcessing ? <CircularProgress size={20} color="inherit" /> : "UPI"}
                     </button>
                 </div>
-
-                <button
-                    onClick={onPrintReceipt}
-                    className="w-full py-3 bg-white text-gray-700 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow transition-all flex items-center justify-center gap-2"
-                >
-                    <PrintIcon fontSize="small" />
-                    Print Receipt
-                </button>
             </div>
         </div>
     );
