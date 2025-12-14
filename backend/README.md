@@ -165,3 +165,138 @@ We would follow the guidelines given inside the [razorPay docs](https://razorpay
 - Verify the Payment Status (Via WEB-HOOKS).
 
 **Note:** Web hooks are not allowed for localhost services, but I will still set it up just for production deployment in later stages of the application to improve UX (For this we need to update Security Config as well mostly CORS).
+
+## 📊 Analysis & Reporting
+
+This section describes the analytical capabilities added to **Bill Mitra** to help store owners, managers, and employees
+gain actionable insights from sales data.
+
+### 1. Sales Analytics Overview
+
+The system now supports **real-time and aggregated sales analysis** at multiple levels:
+
+* **Store-level analytics**
+* **Employee-level analytics**
+* **Item-level analytics**
+* **Time-based analytics (Daily / Monthly / Overall)**
+
+All analytics are derived directly from transactional order data (`ref_order`, `ref_order_item_mapping`) ensuring **data
+consistency** and **accuracy**.
+
+---
+
+### 2. Sales Metrics Supported
+
+#### 🔹 Overall Store Sales
+
+* Total revenue (`SUM(totalAmount)`)
+* Total number of bills (`COUNT(order)`)
+
+#### 🔹 Monthly Sales
+
+* Revenue and bill count for the **current month**
+* Filtered using `MONTH(createdAt)` and `YEAR(createdAt)`
+
+#### 🔹 Daily Sales
+
+* Revenue and bill count for **today**
+* Filtered using `DATE(createdAt) = CURRENT_DATE`
+
+#### 🔹 Employee-wise Sales
+
+* Total sales by a specific employee
+* Monthly and daily breakdown per employee
+* Helps in evaluating employee performance
+
+---
+
+### 3. Most Hardworking Employee (Monthly)
+
+* Identifies the **employee with the highest number of successful orders** in the current month
+* Grouped by `createdBy`
+* Sorted in descending order of order count
+
+**Use case:**
+
+* Incentives & rewards
+* Performance reviews
+* Managerial insights
+
+---
+
+### 4. Most Sellable Item (Monthly)
+
+* Identifies the **most sold item** based on total quantity sold
+* Uses `SUM(order_item.quantity)`
+* Grouped by item attributes
+* Sorted in descending order of quantity
+
+**Use case:**
+
+* Inventory planning
+* Demand forecasting
+* Promotional strategies
+
+---
+
+### 5. Pagination for Orders
+
+To handle large datasets efficiently:
+
+* Backend-driven pagination using `Pageable`
+* Prevents loading thousands of orders at once
+* Improves performance and scalability
+
+**Benefits:**
+
+* Faster API responses
+* Lower memory consumption
+* Clean frontend integration
+
+---
+
+### 6. DTO Projection Strategy (Performance-Oriented)
+
+Instead of returning full entities:
+
+* **JPQL constructor expressions** are used
+* Custom DTOs like:
+
+  * `SalesReportDto`
+  * `SalesEmployeeBillDto`
+  * `SalesItemDto`
+  * `ItemDto`
+* Only required fields are fetched
+
+**Why this matters:**
+
+* Avoids N+1 query problem
+* Reduces payload size
+* Improves query execution time
+
+---
+
+### 7. Query Optimization Decisions
+
+* Aggregations handled at **database level**, not in Java loops
+* `COALESCE` used to prevent null results
+* Explicit `GROUP BY` fields to maintain JPQL correctness
+* Indexed foreign keys improve performance on joins
+
+---
+
+### 8. Security & Multi-Tenancy in Analytics
+
+* Every analytical query is **scoped to `storeId`**
+* Prevents cross-store data leakage
+* Store context is fetched from `SecurityContextHolder` via `CustomUserDetails`
+
+---
+
+### 9. Reliability & Error Handling
+
+* Graceful handling of empty datasets
+* Meaningful HTTP responses (`NOT_FOUND`, `OK`)
+* Defensive coding using `Optional`, `COALESCE`, and validations
+
+---
