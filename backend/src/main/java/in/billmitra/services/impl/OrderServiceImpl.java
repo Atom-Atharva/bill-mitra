@@ -8,11 +8,16 @@ import in.billmitra.entities.enums.TransactionStatus;
 import in.billmitra.repositories.ItemRepository;
 import in.billmitra.repositories.OrderRepository;
 import in.billmitra.repositories.StoreRepository;
+import in.billmitra.repositories.UserRepository;
 import in.billmitra.security.CustomUserDetails;
 import in.billmitra.services.OrderService;
 import in.billmitra.utils.RazorpayUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
     @Value("${rzp.api.key}")
     private String RAZORPAY_API_PUBLIC_KEY;
     private final OrderRepository orderRepository;
@@ -185,5 +191,166 @@ public class OrderServiceImpl implements OrderService {
             }
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Signature verification failed.");
         }
+    }
+
+    @Override
+    public SalesResponse getSalesOfEmployeeReport(Long userId) {
+        // Get StoreID
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long storeId = customUserDetails.getStoreId();
+
+        // Check if user is in store
+        boolean isExist = userRepository.existsByIdAndStore_id(userId, storeId);
+        if (!isExist) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+        }
+
+        // From the store fetch Employee's monthly, today, overall sales
+        SalesReportDto dailySalesDto = orderRepository.getDailySalesOfEmployeeByStoreId(storeId, userId);
+        SalesReportDto monthlySalesDto = orderRepository.getMonthlySalesOfEmployeeByStoreId(storeId, userId);
+        SalesReportDto totalSalesDto = orderRepository.getTotalSalesOfEmployeeByStoreId(storeId, userId);
+
+        return SalesResponse.builder()
+                .sales(SalesDto.builder()
+                        .totalSales(totalSalesDto.getSales())
+                        .monthlySales(monthlySalesDto.getSales())
+                        .todaySales(dailySalesDto.getSales())
+                        .totalBills(totalSalesDto.getBills())
+                        .monthlyBills(monthlySalesDto.getBills())
+                        .todayBills(dailySalesDto.getBills())
+                        .build())
+                .message("Sales Report fetched successfully.")
+                .build();
+    }
+
+    @Override
+    public SalesEmployeeResponse getHardworkingEmployee() {
+        // Get Store ID
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long storeId = customUserDetails.getStoreId();
+
+        // Fetch Employee with the highest bills in the current month.
+        SalesEmployeeBillDto employee = orderRepository.getMostHardworkingEmployeeOfTheMonth(storeId)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No employees found in the current month."));
+
+        return SalesEmployeeResponse.builder()
+                .employee(employee)
+                .message("Employee fetched successfully.")
+                .build();
+    }
+
+    @Override
+    public SalesItemResponse getMostSellableItem() {
+        // Get Store ID
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long storeId = customUserDetails.getStoreId();
+
+        // Fetch Item with the highest sales in the current month
+        SalesItemDto item = orderRepository.getMostSellableItemInStore(storeId)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No items found in the current month."));
+
+        return SalesItemResponse.builder()
+                .item(item)
+                .message("Most sellable item fetched successfully.")
+                .build();
+    }
+
+    @Override
+    public SalesResponse getSalesReport() {
+        // Get StoreId
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long storeId = customUserDetails.getStoreId();
+
+        // Get Monthly, today, overall sales
+        SalesReportDto dailySalesDto = orderRepository.getDailySalesByStoreId(storeId);
+        SalesReportDto monthlySalesDto = orderRepository.getMonthlySalesByStoreId(storeId);
+        SalesReportDto totalSalesDto = orderRepository.getTotalSalesByStoreId(storeId);
+
+        return SalesResponse.builder()
+                .sales(SalesDto.builder()
+                        .totalSales(totalSalesDto.getSales())
+                        .monthlySales(monthlySalesDto.getSales())
+                        .todaySales(dailySalesDto.getSales())
+                        .totalBills(totalSalesDto.getBills())
+                        .monthlyBills(monthlySalesDto.getBills())
+                        .todayBills(dailySalesDto.getBills())
+                        .build())
+                .message("Sales Report fetched successfully.")
+                .build();
+    }
+
+    @Override
+    public OrderListAndItemsResponse getAllOrders(int page, int size) {
+        // Get StoreId
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long storeId = customUserDetails.getStoreId();
+
+        // Pagination
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<OrderEntity> orderPage =
+                orderRepository.findByStoreIdAndTransactionStatus(
+                        storeId,
+                        TransactionStatus.SUCCESS,
+                        pageable
+                );
+
+        if (orderPage.isEmpty()) {
+            return OrderListAndItemsResponse.builder()
+                    .orders(List.of())
+                    .currentPage(page)
+                    .totalPages(0)
+                    .totalOrders(0)
+                    .message("No successful orders found.")
+                    .build();
+        }
+
+        List<OrderAndItemsDto> successOrders = orderPage.getContent()
+                .stream()
+                .map(this::convertToOrderAndItemDto)
+                .toList();
+
+        return OrderListAndItemsResponse.builder()
+                .orders(successOrders)
+                .currentPage(orderPage.getNumber())
+                .totalPages(orderPage.getTotalPages())
+                .totalOrders(orderPage.getTotalElements())
+                .message("Orders fetched successfully.")
+                .build();
+    }
+
+    private OrderAndItemsDto convertToOrderAndItemDto(OrderEntity orderEntity) {
+        List<OrderItemDto> itemsDto = orderEntity.getItems()
+                .stream()
+                .map(itemMapping -> OrderItemDto.builder()
+                        .itemId(itemMapping.getItem().getId())
+                        .itemName(itemMapping.getItem().getName())
+                        .itemQuantity(itemMapping.getQuantity())
+                        .itemPrice(itemMapping.getItem().getPrice())
+                        .itemImgUrl(itemMapping.getItem().getImgUrl())
+                        .build())
+                .toList();
+
+        return OrderAndItemsDto.builder()
+                .order(PlacedOrderDto.builder()
+                        .orderId(orderEntity.getId())
+                        .paymentMethod(orderEntity.getPaymentMethod().name())
+                        .transactionStatus(orderEntity.getTransactionStatus().name())
+                        .totalAmount(orderEntity.getTotalAmount())
+                        .discount(orderEntity.getDiscount())
+                        .taxFee(orderEntity.getTaxFee())
+                        .createdBy(CreatedByDto.builder()
+                                .id(orderEntity.getCreatedBy().getId())
+                                .username(orderEntity.getCreatedBy().getName())
+                                .role(orderEntity.getCreatedBy().getRole())
+                                .build())
+                        .updatedAt(orderEntity.getUpdatedAt())
+                        .build())
+                .items(itemsDto)
+                .build();
     }
 }

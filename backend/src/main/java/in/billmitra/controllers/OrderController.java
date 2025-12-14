@@ -5,10 +5,7 @@ import in.billmitra.services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -41,6 +38,81 @@ public class OrderController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Unable to verify payment: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/admin/all")
+    public ResponseEntity<OrderListAndItemsResponse> getAllOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            if (size > 20) {
+                size = 20;
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(orderService.getAllOrders(page, size));
+        } catch (ResponseStatusException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(e.getStatusCode()).body(OrderListAndItemsResponse.builder().orders(null).message(e.getReason()).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(OrderListAndItemsResponse.builder().orders(null).message("Unable to fetch orders: " + e.getMessage()).build());
+        }
+    }
+
+    @GetMapping("/admin/sales")
+    public ResponseEntity<SalesResponse> getSalesInfo() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(orderService.getSalesReport());
+        } catch (ResponseStatusException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(e.getStatusCode()).body(SalesResponse.builder().sales(null).message(e.getReason()).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(SalesResponse.builder().sales(null).message("Unable to fetch sales info: " + e.getMessage()).build());
+        }
+    }
+
+    @GetMapping("/admin/sales/employee")
+    public ResponseEntity<SalesResponse> getSalesInfoOfEmployee(
+            @RequestParam Long userId
+    ) {
+        try {
+            if (userId == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id cannot be null");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(orderService.getSalesOfEmployeeReport(userId));
+        } catch (ResponseStatusException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(e.getStatusCode()).body(SalesResponse.builder().sales(null).message(e.getReason()).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(SalesResponse.builder().sales(null).message("Unable to fetch sales info: " + e.getMessage()).build());
+        }
+    }
+
+    @GetMapping("/admin/sales/employee/hardworking")
+    public ResponseEntity<SalesEmployeeResponse> getHardworkingSalesInfoOfEmployee() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(orderService.getHardworkingEmployee());
+        } catch (ResponseStatusException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(e.getStatusCode()).body(SalesEmployeeResponse.builder().employee(null).message(e.getReason()).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(SalesEmployeeResponse.builder().employee(null).message("Unable to get Hardworking Employee").build());
+        }
+    }
+
+    @GetMapping("/admin/sales/item/most-sellable")
+    public ResponseEntity<SalesItemResponse> getMostSellableItem() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(orderService.getMostSellableItem());
+        } catch (ResponseStatusException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(e.getStatusCode()).body(SalesItemResponse.builder().item(null).message(e.getReason()).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(SalesItemResponse.builder().item(null).message("Unable to get most sellable item").build());
         }
     }
 }

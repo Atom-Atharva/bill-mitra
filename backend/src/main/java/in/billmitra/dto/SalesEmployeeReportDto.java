@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class OrderItemRequest {
-    private Long itemId;
-    private Long quantity;
+public class SalesEmployeeReportDto {
+    private SalesDto sales;
 }

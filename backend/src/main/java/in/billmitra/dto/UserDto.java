@@ -1,11 +1,9 @@
 package in.billmitra.dto;
 
-import in.billmitra.entities.UserEntity;
 import in.billmitra.entities.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @Builder
@@ -16,4 +14,12 @@ public class UserDto {
     private String email;
     private Role role;
     private CreatedByDto createdBy;
+
+    public UserDto(Long id, String name, String email, Role role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.role = role;
+        this.createdBy = null;
+    }
 }

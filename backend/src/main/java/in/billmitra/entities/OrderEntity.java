@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
@@ -49,11 +50,11 @@ public class OrderEntity {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private Long createdAt;
+    private Timestamp createdAt;
 
     @UpdateTimestamp
     @Column(nullable = false)
-    private Long updatedAt;
+    private Timestamp updatedAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItemMappingEntity> items;

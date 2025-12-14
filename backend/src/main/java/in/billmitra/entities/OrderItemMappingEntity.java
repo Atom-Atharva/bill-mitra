@@ -33,7 +33,7 @@ public class OrderItemMappingEntity {
     @JoinColumn(name = "item_id")
     private ItemEntity item;
 
-    private Integer quantity;
+    private Long quantity;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

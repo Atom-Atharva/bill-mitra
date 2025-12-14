@@ -47,7 +47,8 @@ public class SecurityConfig {
                                 "/auth/register/user",
                                 "/categories/admin/**",
                                 "/items/admin/**",
-                                "/users/admin/**"
+                                "/users/admin/**",
+                                "/orders/admin/**"
                         ).hasAnyRole("OWNER", "MANAGER")
                         .anyRequest().authenticated()
                 )
