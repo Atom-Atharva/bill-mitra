@@ -1,5 +1,6 @@
 package in.billmitra.services;
 
+import in.billmitra.controllers.SalesTimelineResponse;
 import in.billmitra.dto.*;
 
 public interface OrderService {
@@ -15,4 +16,6 @@ public interface OrderService {
     SalesEmployeeResponse getHardworkingEmployee();
 
     SalesItemResponse getMostSellableItem();
+    
+    SalesTimelineResponse getSalesTimelineReport(SalesTimelineRequest request);
 }

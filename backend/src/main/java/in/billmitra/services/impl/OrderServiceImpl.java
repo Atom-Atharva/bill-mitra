@@ -1,6 +1,7 @@
 package in.billmitra.services.impl;
 
 import com.razorpay.Order;
+import in.billmitra.controllers.SalesTimelineResponse;
 import in.billmitra.dto.*;
 import in.billmitra.entities.*;
 import in.billmitra.entities.enums.PaymentMethod;
@@ -23,6 +24,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -256,6 +260,52 @@ public class OrderServiceImpl implements OrderService {
         return SalesItemResponse.builder()
                 .item(item)
                 .message("Most sellable item fetched successfully.")
+                .build();
+    }
+
+    @Override
+    public SalesTimelineResponse getSalesTimelineReport(SalesTimelineRequest request) {
+        // Edge Cases
+        if (request.getFromDate() == null || request.getToDate() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "From Date and To Date are required.");
+        }
+
+        if (request.getFromDate().isAfter(request.getToDate())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "From Date cannot be after To Date."
+            );
+        }
+
+        // Get Store ID
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long storeId = customUserDetails.getStoreId();
+
+        List<DailySalesDto> dayWiseSales = orderRepository.getDailySalesInTimeline(
+                storeId,
+                Timestamp.valueOf(request.getFromDate().atStartOfDay()),
+                Timestamp.valueOf(request.getToDate().atTime(23, 59, 59))
+        );
+
+        // Insert into MAP
+        Map<LocalDate, DailySalesDto> salesMap = dayWiseSales.stream()
+                .collect(Collectors.toMap(DailySalesDto::getDate, dailySalesDto -> dailySalesDto));
+
+        List<DailySalesDto> salesTimeline = new ArrayList<>();
+
+        LocalDate currentDate = request.getFromDate();
+        LocalDate endDate = request.getToDate();
+
+        while (!currentDate.isAfter(endDate)) {
+            salesTimeline.add(
+                    salesMap.getOrDefault(currentDate, new DailySalesDto(currentDate, 0.0, 0L))
+            );
+            currentDate = currentDate.plusDays(1);
+        }
+
+        return SalesTimelineResponse.builder()
+                .sales(salesTimeline)
+                .message("Sales Timeline Report fetched successfully.")
                 .build();
     }
 

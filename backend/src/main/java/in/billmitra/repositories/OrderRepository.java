@@ -1,5 +1,6 @@
 package in.billmitra.repositories;
 
+import in.billmitra.dto.DailySalesDto;
 import in.billmitra.dto.SalesEmployeeBillDto;
 import in.billmitra.dto.SalesItemDto;
 import in.billmitra.dto.SalesReportDto;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -153,4 +155,19 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
                 ORDER BY SUM(oim.quantity) DESC
             """)
     List<SalesItemDto> getMostSellableItemInStore(Long storeId);
+
+    @Query("""
+            SELECT new in.billmitra.dto.DailySalesDto(
+                    CAST(o.createdAt AS localdate) ,
+                    COALESCE(SUM(o.totalAmount), 0),
+                    COUNT(o)
+                )
+                FROM OrderEntity o
+                WHERE o.store.id = :storeId
+                  AND o.transactionStatus = in.billmitra.entities.enums.TransactionStatus.SUCCESS
+                  AND o.createdAt BETWEEN :fromDate AND :toDate
+                GROUP BY DATE(o.createdAt)
+                ORDER BY DATE(o.createdAt)
+            """)
+    List<DailySalesDto> getDailySalesInTimeline(Long storeId, Timestamp fromDate, Timestamp toDate);
 }

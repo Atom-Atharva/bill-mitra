@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/orders")
@@ -115,4 +117,36 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(SalesItemResponse.builder().item(null).message("Unable to get most sellable item").build());
         }
     }
+
+    @GetMapping("/admin/sales/timeline")
+    public ResponseEntity<SalesTimelineResponse> getSalesBetweenDates(
+            @RequestParam("fromDate") LocalDate fromDate,
+            @RequestParam("toDate") LocalDate toDate
+    ) {
+        try {
+            SalesTimelineRequest request = SalesTimelineRequest.builder()
+                    .fromDate(fromDate)
+                    .toDate(toDate)
+                    .build();
+
+            return ResponseEntity.ok(orderService.getSalesTimelineReport(request));
+
+        } catch (ResponseStatusException e) {
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(SalesTimelineResponse.builder()
+                            .sales(null)
+                            .message(e.getReason())
+                            .build());
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(SalesTimelineResponse.builder()
+                            .sales(null)
+                            .message("Unable to fetch sales info")
+                            .build());
+        }
+    }
+
 }
