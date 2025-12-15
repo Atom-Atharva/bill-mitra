@@ -4,6 +4,8 @@ import Cart from '@/components/home/Cart'
 import Settings from '@/components/home/Settings'
 import Sidebar, { TABS } from '@/components/home/Sidebar'
 import Store from '@/components/home/Store'
+import Analysis from '@/components/home/Analysis'
+import Orders from '@/components/home/Orders'
 import type { RootState } from '@/store/store'
 import { addUser } from '@/store/userSlice'
 import { useMutation } from '@tanstack/react-query'
@@ -58,7 +60,9 @@ function RouteComponent() {
             {activeTabs === TABS.STORE && <Store />}
             {activeTabs === TABS.ACCOUNT && <Account />}
             {activeTabs === TABS.SETTINGS && <Settings />}
+            {activeTabs === TABS.ANALYSIS && <Analysis />}
+            {activeTabs === TABS.ORDERS && <Orders />}
         </div>
-        <Cart />
+        {activeTabs !== TABS.ANALYSIS && activeTabs !== TABS.ORDERS && <Cart />}
     </div>
 }

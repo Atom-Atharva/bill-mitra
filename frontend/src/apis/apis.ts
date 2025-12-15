@@ -37,5 +37,11 @@ export const API = {
     ORDER: {
         placeOrder: getEnv("VITE_API_PLACE_ORDER"),
         verifySignature: getEnv("VITE_API_VERIFY_SIGNATURE"),
+        salesData: getEnv("VITE_API_SALES_DATA"),
+        hardworkingEmployee: getEnv("VITE_API_HARDWORKING_EMPLOYEE"),
+        mostSellableItem: getEnv("VITE_API_MOST_SELLABLE_ITEM"),
+        employeeSales: getEnv("VITE_API_EMPLOYEE_SALES"),
+        salesTimeline: getEnv("VITE_API_SALES_TIMELINE"),
+        allOrders: getEnv("VITE_API_ALL_ORDERS"),
     },
 };

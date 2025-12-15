@@ -3,6 +3,8 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import StoreIcon from '@mui/icons-material/Store';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { logoutUser } from '@/apis/logoutUser';
@@ -19,6 +21,8 @@ export const TABS = {
     STORE: "STORE",
     ACCOUNT: "ACCOUNT",
     SETTINGS: "SETTINGS",
+    ANALYSIS: "ANALYSIS",
+    ORDERS: "ORDERS",
 } as const;
 
 type TabTypes = keyof typeof TABS;
@@ -95,6 +99,26 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTabs, setActiveTabs }) => {
                         >
                             <SettingsIcon fontSize="large" className={activeTabs === TABS.SETTINGS ? "text-blue-600" : "text-gray-600"} />
                             {isExtended && <span className={`font-medium ${activeTabs === TABS.SETTINGS ? "text-blue-700" : "text-gray-700"}`}>Settings</span>}
+                        </div>
+                    }
+                    {
+                        (user?.role === "MANAGER" || user?.role === "OWNER") &&
+                        <div className={`flex items-center cursor-pointer gap-3 p-3 rounded-lg transition-all duration-300 hover:bg-blue-50 ${activeTabs === TABS.ANALYSIS ? "bg-blue-100 shadow-sm" : ""
+                            }`}
+                            onClick={() => handleSwitchTabs(TABS.ANALYSIS)}
+                        >
+                            <AnalyticsIcon fontSize="large" className={activeTabs === TABS.ANALYSIS ? "text-blue-600" : "text-gray-600"} />
+                            {isExtended && <span className={`font-medium ${activeTabs === TABS.ANALYSIS ? "text-blue-700" : "text-gray-700"}`}>Analysis</span>}
+                        </div>
+                    }
+                    {
+                        (user?.role === "MANAGER" || user?.role === "OWNER") &&
+                        <div className={`flex items-center cursor-pointer gap-3 p-3 rounded-lg transition-all duration-300 hover:bg-blue-50 ${activeTabs === TABS.ORDERS ? "bg-blue-100 shadow-sm" : ""
+                            }`}
+                            onClick={() => handleSwitchTabs(TABS.ORDERS)}
+                        >
+                            <ReceiptIcon fontSize="large" className={activeTabs === TABS.ORDERS ? "text-blue-600" : "text-gray-600"} />
+                            {isExtended && <span className={`font-medium ${activeTabs === TABS.ORDERS ? "text-blue-700" : "text-gray-700"}`}>Orders</span>}
                         </div>
                     }
                 </div>
