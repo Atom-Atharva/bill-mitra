@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API } from "./apis";
 
-export const deleteUser = async (userId: bigint) => {
+export const deleteUser = async (userId: number) => {
     try {
         const res = await axios.delete(API.USER.deleteUser + "/" + userId, {
             withCredentials: true,

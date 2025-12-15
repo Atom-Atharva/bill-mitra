@@ -1,12 +1,12 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface User {
-    id: bigint;
+    id: number;
     name: string;
     email: string;
     role: string;
-    createdBy: {
-        id: bigint;
+    createdBy?: {
+        id: number;
         username: string;
         role: string;
     };
@@ -30,7 +30,7 @@ export const employeeSlice = createSlice({
         addEmployee: (state, action: PayloadAction<User>) => {
             state.employees.push(action.payload);
         },
-        removeEmployee: (state, action: PayloadAction<bigint>) => {
+        removeEmployee: (state, action: PayloadAction<number>) => {
             state.employees = state.employees.filter(
                 (emp) => emp.id !== action.payload
             );

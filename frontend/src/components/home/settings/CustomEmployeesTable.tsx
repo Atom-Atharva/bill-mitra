@@ -21,7 +21,7 @@ const CustomEmployeesTable = () => {
     const currentUser = useSelector((state: RootState) => state.user.user);
     const dispatch = useDispatch();
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [userToDelete, setUserToDelete] = useState<{ id: bigint; name: string } | null>(null);
+    const [userToDelete, setUserToDelete] = useState<{ id: number; name: string } | null>(null);
 
     const { mutate: deleteEmployeeMutation } = useMutation({
         mutationFn: deleteUser,
@@ -36,7 +36,7 @@ const CustomEmployeesTable = () => {
         }
     });
 
-    const handleDeleteEmployee = (userId: bigint, userName: string) => {
+    const handleDeleteEmployee = (userId: number, userName: string) => {
         setUserToDelete({ id: userId, name: userName });
         setDeleteDialogOpen(true);
     };
