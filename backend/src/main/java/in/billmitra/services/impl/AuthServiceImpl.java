@@ -1,21 +1,22 @@
 package in.billmitra.services.impl;
 
 import in.billmitra.dto.AuthRequest;
-import in.billmitra.dto.CreatedByDto;
 import in.billmitra.dto.RegisterStoreRequest;
 import in.billmitra.dto.RegisterUserRequest;
-import in.billmitra.entities.enums.Role;
 import in.billmitra.entities.StoreEntity;
 import in.billmitra.entities.UserEntity;
+import in.billmitra.entities.enums.Role;
 import in.billmitra.repositories.StoreRepository;
 import in.billmitra.repositories.UserRepository;
 import in.billmitra.security.CustomUserDetails;
 import in.billmitra.services.AuthService;
 import in.billmitra.utils.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +36,9 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtUtil jwtUtil;
+
+    @Value("${app.cookie.secure}")
+    private boolean isCookieSecure;
 
     @Override
     public void registerStoreAndOwner(RegisterStoreRequest request, HttpServletResponse response) {
@@ -108,26 +112,30 @@ public class AuthServiceImpl implements AuthService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         String token = jwtUtil.generateToken(userDetails);
 
-        // Generate Cookie
-        Cookie cookie = new Cookie("token", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // true in production (HTTPS only)
-        cookie.setPath("/");
-        cookie.setMaxAge(request.getIsRememberMeChecked() ? (8 * 60 * 60) : (60 * 60));
+        ResponseCookie cookie = ResponseCookie.from("token", token)
+                .httpOnly(true)
+                .secure(isCookieSecure)
+                .sameSite(isCookieSecure ? "None" : "Lax")
+                .path("/")
+                .maxAge(request.getIsRememberMeChecked()
+                        ? 8 * 60 * 60
+                        : 60 * 60)
+                .build();
 
-        // Add Cookie in Http Response
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     @Override
     public void logoutUser(HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // Instant deletion
+        ResponseCookie cookie = ResponseCookie.from("token", "")
+                .httpOnly(true)
+                .secure(isCookieSecure)
+                .sameSite(isCookieSecure ? "None" : "Lax")
+                .path("/")
+                .maxAge(0)
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     private void registerUserAndLogin(RegisterUserRequest request, Long storeId, Boolean isRememberMeChecked, HttpServletResponse response) {
